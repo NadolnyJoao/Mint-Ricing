@@ -86,7 +86,7 @@ Teste apertando Right Ctrl - deve sair `/`
 ## 6) Gerar chave SSH para GitHub
 
 ```bash
-./scripts/setup-ssh.sh seuemail@exemplo.com
+./scripts/setup-ssh.sh nadolnyjoaovitor@gmail.com
 ```
 
 Copie a chave pública que aparecer e adicione em: [github.com/settings/ssh/new](https://github.com/settings/ssh/new)
