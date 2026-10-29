@@ -1,0 +1,12 @@
+bibata-cursor-theme-bin
+excalidraw-desktop-bin
+excalidraw-desktop-bin-debug
+mocktail-bin
+omafox
+omafox-debug
+stirling-pdf-desktop-bin
+stirling-pdf-desktop-bin-debug
+ventoy-bin
+ventoy-bin-debug
+youtube-music-for-desktop-bin
+youtube-music-for-desktop-bin-debug

@@ -1,0 +1,35 @@
+
+{
+  "$schema": "https://github.com",
+  "logo": {
+    "type": "auto",
+    "source": "$(find /home/nadolny/Pictures/FastfetchIcons -type f \\( -name \"*.png\" -o -name \"*.jpg\" -o -name \"*.jpeg\" -o -name \"*.webp\" \\) | shuf -n 1)",
+    "width": 30,
+    "height": 18,
+    "padding": {
+      "top": 1,
+      "left": 1,
+      "right": 2
+    }
+  },
+  "modules": [
+    // Seus módulos atuais continuam aqui (OS, Kernel, Uptime, etc.)
+    "title",
+    "separator",
+    "os",
+    "host",
+    "kernel",
+    "uptime",
+    "packages",
+    "shell",
+    "display",
+    "de",
+    "wm",
+    "terminal",
+    "cpu",
+    "gpu",
+    "memory",
+    "break",
+    "colors"
+  ]
+}
