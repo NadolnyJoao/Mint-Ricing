@@ -2,16 +2,15 @@
 set -euo pipefail
 
 echo "======================================"
-echo "  Gerador de config Sway (Hyprland->Sway)"
+echo "  Gerador de config Sway (limpo)"
 echo "======================================"
 
 SWAY_DIR="$HOME/.config/sway"
 mkdir -p "$SWAY_DIR"
 
-# Copiar referência
 cat > "$SWAY_DIR/config" << 'SWAYEOF'
-# Gerado automaticamente pelo Mint-Ricing
-# Baseado nas keybinds do seu Omarchy/Hyprland
+# Mint-Ricing Sway config
+# Baseado nas keybinds do Omarchy + suas personalizações
 
 ### Variables
 set $mod Mod4
@@ -20,15 +19,16 @@ set $down j
 set $up k
 set $right l
 set $term foot
-set $menu rofi -show drun | xargs swaymsg exec --
+set $menu rofi -show drun
 
 ### Output
-output * bg $(find ~/Pictures -type f \( -iname "*.jpg" -o -iname "*.png" \) | shuf -n1) fill 2>/dev/null || swaymsg output * bg #000000 solid_color
+output * bg #000000 solid_color
 
 ### Input
 input "type:keyboard" {
     xkb_layout us
     xkb_variant intl
+    xkb_options caps:escape
 }
 
 input type:touchpad {
@@ -38,35 +38,23 @@ input type:touchpad {
     middle_emulation enabled
 }
 
-### Key bindings - Apps
+### Key bindings - Essentials
 bindsym $mod+Return exec $term
 bindsym $mod+Shift+Return exec firefox
-bindsym $mod+Shift+b exec firefox
-bindsym $mod+Shift+n exec nvim
-bindsym $mod+e exec thunar
-bindsym $mod+Shift+e exec google-chrome 2>/dev/null || firefox
-bindsym $mod+y exec firefox --new-window https://youtube.com 2>/dev/null || xdg-open https://youtube.com
-bindsym $mod+g exec firefox --new-window https://mail.google.com 2>/dev/null || xdg-open https://mail.google.com
-bindsym $mod+a exec firefox --new-window https://calendar.google.com 2>/dev/null || xdg-open https://calendar.google.com
-bindsym $mod+Shift+g exec signal-desktop 2>/dev/null || true
-bindsym $mod+Ctrl+g exec signal-desktop 2>/dev/null || true
-bindsym $mod+Shift+o exec obsidian 2>/dev/null || true
-
-### Key bindings - Launcher/Menu
-bindsym $mod+Space exec rofi -show drun
-bindsym $mod+Ctrl+Space exec rofi -show run
-bindsym $mod+Escape exec wlogout 2>/dev/null || swaymsg exit
-
-### Key bindings - Window management
+bindsym $mod+Shift+e exec thunar
 bindsym $mod+q kill
-bindsym $mod+Shift+q kill
 bindsym Ctrl+Alt+Delete kill
+bindsym $mod+Space exec $menu
+bindsym $mod+Shift+Space floating toggle
+bindsym $mod+Escape exec swaynag -t warning -m 'Sair do Sway?' -B 'Sair' 'swaymsg exit'
+
+### Window management
 bindsym $mod+f fullscreen
 bindsym $mod+Shift+f fullscreen
 bindsym $mod+Ctrl+f fullscreen global
 bindsym $mod+t floating toggle
-bindsym $mod+Shift+space floating toggle
-bindsym $mod+Shift+t layout toggle split
+bindsym $mod+j layout toggle split
+bindsym $mod+p pseudo
 bindsym $mod+o floating enable, sticky enable
 
 ### Focus
@@ -84,10 +72,19 @@ bindsym $mod+Shift+Up move up
 bindsym $mod+Shift+Right move right
 
 ### Resize
-bindsym $mod+Ctrl+Left resize shrink width 10px
-bindsym $mod+Ctrl+Right resize grow width 10px
-bindsym $mod+Ctrl+Up resize shrink height 10px
-bindsym $mod+Ctrl+Down resize grow height 10px
+mode "resize" {
+    bindsym $left resize shrink width 10px
+    bindsym $down resize grow height 10px
+    bindsym $up resize shrink height 10px
+    bindsym $right resize grow width 10px
+    bindsym Left resize shrink width 10px
+    bindsym Down resize grow height 10px
+    bindsym Up resize shrink height 10px
+    bindsym Right resize grow width 10px
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+bindsym $mod+r mode "resize"
 
 ### Workspaces
 bindsym $mod+1 workspace number 1
@@ -112,6 +109,10 @@ bindsym $mod+Shift+8 move container to workspace number 8
 bindsym $mod+Shift+9 move container to workspace number 9
 bindsym $mod+Shift+0 move container to workspace number 10
 
+bindsym $mod+Tab workspace next
+bindsym $mod+Shift+Tab workspace prev
+bindsym $mod+Ctrl+Tab workspace back_and_forth
+
 ### Scratchpad
 bindsym $mod+Shift+minus move scratchpad
 bindsym $mod+minus scratchpad show
@@ -128,7 +129,7 @@ bindsym XF86AudioMute exec pamixer -t
 bindsym XF86AudioMicMute exec pactl set-source-mute @DEFAULT_SOURCE@ toggle
 
 ### Brightness
-bindsym XF86MonBrightnessUp exec brightnessctl set 5%+ 2>/dev/null || true
+bindsym XF86MonBrightnessUp exec brightnessctl set +5% 2>/dev/null || true
 bindsym XF86MonBrightnessDown exec brightnessctl set 5%- 2>/dev/null || true
 
 ### Media
@@ -139,29 +140,25 @@ bindsym XF86AudioPrev exec playerctl previous
 ### Clipboard
 bindsym $mod+Ctrl+v exec cliphist list | rofi -dmenu | cliphist decode | wl-copy
 
-### Reload/Exit
-bindsym $mod+Shift+c reload
-bindsym $mod+Shift+e exec swaynag -t warning -m 'Sair do Sway?' -B 'Sim' 'swaymsg exit'
+### Move/resize with mouse
+floating_modifier $mod normal
 
 ### Bar
 bar {
+    position top
     swaybar_command waybar
 }
 
 ### Autostart
-exec_always --no-startup-id nm-applet
-exec_always --no-startup-id blueman-applet
+exec --no-startup-id nm-applet
+exec --no-startup-id blueman-applet
 exec --no-startup-id /usr/libexec/polkit-gnome-authentication-agent-1
 exec --no-startup-id wl-paste --type text --watch cliphist store
 exec --no-startup-id wl-paste --type image --watch cliphist store
 exec mako 2>/dev/null || true
 
-# Seus overrides do Omarchy (mapeados)
-# SUPER+Y = YouTube, SUPER+G = Gmail, SUPER+E = Thunar, SUPER+A = Agenda
-
 include /etc/sway/config.d/*
 SWAYEOF
 
 chmod +x "$SWAY_DIR/config"
-echo "[OK] Config gerado em $SWAY_DIR/config"
-echo "[INFO] Abra com: sway (ou selecione Sway no login)"
+echo "[OK] Config Sway gerado em $SWAY_DIR/config"
